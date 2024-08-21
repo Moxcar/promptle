@@ -43,7 +43,7 @@ const test = async () => {
         }),
         execute: async ({ word }) => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          imageUrl = (await generateImage(word)).images[0].url;
+          imageUrl = (await generateImage(word)).url;
           //Save to database
           await api.dailyImage.createDailyImageGuess({
             imageUrl,
