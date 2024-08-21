@@ -4,6 +4,7 @@ import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
 import * as fal from "@fal-ai/serverless-client";
 import { api } from "~/trpc/server";
+import getRandomWord from "~/lib/generateRandomWord";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -12,13 +13,13 @@ export async function GET(request: NextRequest) {
       status: 401,
     });
   }
-  const result = await test();
+  const result = await generateDailyImageWithRandomWord();
 
   return Response.json({ success: true, result });
 }
 
-const test = async () => {
-  const randomWord = "superhero";
+const generateDailyImageWithRandomWord = async () => {
+  const randomWord = getRandomWord();
   const system =
     "Generate an image that clearly represents the word. The image should focus on the key elements or features commonly associated with this word, making it easily identifiable. Use vibrant colors and simple shapes to make the concept of the word obvious. IMPORTANT: The image should not have the word written on it, but should be able to convey the meaning of the word without any text.";
 
