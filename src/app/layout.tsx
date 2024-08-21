@@ -6,6 +6,7 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import { ThemeProvider } from "~/components/theme-provider";
 import { ModeToggle } from "~/components/mode-toggle";
+import { GlobalStateProvider } from "~/components/GlobalStateContext";
 
 export const metadata: Metadata = {
   title: "Create T3 App",
@@ -26,8 +27,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TRPCReactProvider>
-            <ModeToggle />
-            {children}
+            <GlobalStateProvider>
+              <main className="flex min-h-screen flex-col items-center justify-center gap-4 text-white">
+                <ModeToggle />
+                {children}
+              </main>
+            </GlobalStateProvider>
           </TRPCReactProvider>
         </ThemeProvider>
       </body>
