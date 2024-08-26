@@ -13,8 +13,24 @@ export async function GET(request: NextRequest) {
       status: 401,
     });
   }
-  const result = generateDailyImageWithRandomWord();
-  return Response.json({ success: true, result });
+
+  try {
+    // Esperar a que la función asincrónica termine
+    const imageUrl = await generateDailyImageWithRandomWord();
+    return new Response(JSON.stringify({ success: true, result: imageUrl }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error generating daily image:", error);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    return new Response(
+      JSON.stringify({ success: false, error: error as string }),
+      {
+        headers: { "Content-Type": "application/json" },
+        status: 500,
+      },
+    );
+  }
 }
 
 const generateDailyImageWithRandomWord = async () => {
