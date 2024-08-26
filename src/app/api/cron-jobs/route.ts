@@ -71,7 +71,11 @@ const generateDailyImageWithRandomWord = async () => {
         },
       }),
     },
+  }).catch((error) => {
+    console.error("Error generating image:", error);
+    throw new Error("Error generating image");
   });
+  console.log("Image generated for word:", randomWord);
   return imageUrl;
 };
 
