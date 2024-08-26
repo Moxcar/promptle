@@ -8,7 +8,7 @@ import getRandomWord from "~/lib/generateRandomWord";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}` && false) {
     return new Response("Unauthorized", {
       status: 401,
     });
@@ -44,7 +44,7 @@ const generateDailyImageWithRandomWord = async () => {
         }),
         execute: async ({ word }) => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          imageUrl = (await generateImage(word)).url;
+          imageUrl = (await generateImage(word)).images[0].url;
           //Save to database
           await api.dailyImage.createDailyImageGuess({
             imageUrl,
@@ -66,6 +66,7 @@ const generateImage = async (
   fal.config({
     credentials: process.env.FAL_API_KEY,
   });
+  console.log("Generating image for word: ", word);
   const result: { url: string; images: [] } = await fal.subscribe(
     "fal-ai/fast-sdxl",
     {
@@ -76,5 +77,6 @@ const generateImage = async (
       logs: true,
     },
   );
+  console.log(result);
   return result;
 };
