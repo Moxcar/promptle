@@ -13,9 +13,14 @@ export async function GET(request: NextRequest) {
       status: 401,
     });
   }
-  const result = await generateDailyImageWithRandomWord();
-
-  return Response.json({ success: true, result });
+  generateDailyImageWithRandomWord()
+    .then((result) => {
+      return Response.json({ success: true, result });
+    })
+    .catch((error) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      return Response.json({ success: false, error });
+    });
 }
 
 const generateDailyImageWithRandomWord = async () => {
