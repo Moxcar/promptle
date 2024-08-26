@@ -66,7 +66,6 @@ const generateImage = async (
   fal.config({
     credentials: process.env.FAL_API_KEY,
   });
-  console.log("Generating image for word: ", word);
   const result: { url: string; images: [] } = await fal.subscribe(
     "fal-ai/fast-sdxl",
     {
@@ -77,6 +76,5 @@ const generateImage = async (
       logs: true,
     },
   );
-  console.log(result);
   return result;
 };
