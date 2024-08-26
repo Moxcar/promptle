@@ -43,7 +43,7 @@ const generateDailyImageWithRandomWord = async () => {
 
   console.log("Generating image for word:", randomWord);
 
-  await streamText({
+  return streamText({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
     model: openai("gpt-4o-mini") as any,
     system,
@@ -74,12 +74,12 @@ const generateDailyImageWithRandomWord = async () => {
   })
     .then(() => {
       console.log("Image generated successfully", imageUrl);
+      return imageUrl;
     })
     .catch((error) => {
       console.error("Error generating image:", error);
       throw error;
     });
-  return imageUrl;
 };
 
 const generateImage = async (word: string): Promise<string> => {
