@@ -49,7 +49,7 @@ const generateDailyImageWithRandomWord = async () => {
         }),
         execute: async ({ word }) => {
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          imageUrl = (await generateImage(word)).images[0].url;
+          imageUrl = await generateImage(word);
           //Save to database
           await api.dailyImage.createDailyImageGuess({
             imageUrl,
@@ -62,24 +62,32 @@ const generateDailyImageWithRandomWord = async () => {
   return imageUrl;
 };
 
-const generateImage = async (
-  word: string,
-): Promise<{
-  images: [];
-  url: string;
-}> => {
+const generateImage = async (word: string): Promise<string> => {
   fal.config({
     credentials: process.env.FAL_API_KEY,
   });
-  const result: { url: string; images: [] } = await fal.subscribe(
-    "fal-ai/fast-sdxl",
-    {
-      input: {
-        prompt: `Generate a image that represents correctly the requested word: ${word}`,
-        image_size: "portrait_4_3",
-      },
-      logs: true,
+
+  const result = await fal.subscribe("fal-ai/fast-sdxl", {
+    input: {
+      prompt: `Generate an image that represents correctly the requested word: ${word}`,
+      image_size: "portrait_4_3",
     },
-  );
-  return result;
+    logs: true,
+  });
+
+  if (result && typeof result === "object") {
+    const typedResult = result as { images?: { url?: string }[] };
+
+    if (
+      Array.isArray(typedResult.images) &&
+      typedResult.images.length > 0 &&
+      typedResult.images[0]?.url
+    ) {
+      return typedResult.images[0].url;
+    } else {
+      throw new Error("No images were generated or image URL is missing");
+    }
+  } else {
+    throw new Error("Result is undefined or not an object");
+  }
 };
