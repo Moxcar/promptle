@@ -43,7 +43,7 @@ const generateDailyImageWithRandomWord = async () => {
 
   console.log("Generating image for word:", randomWord);
 
-  streamText({
+  await streamText({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
     model: openai("gpt-4o-mini") as any,
     system,
