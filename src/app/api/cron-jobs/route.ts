@@ -99,9 +99,14 @@ const generateImage = async (word: string): Promise<string> => {
       console.log("Image generated:", typedResult.images[0].url);
       return typedResult.images[0].url;
     } else {
+      console.log(
+        "No images were generated or image URL is missing, Result:",
+        result,
+      );
       throw new Error("No images were generated or image URL is missing");
     }
   } else {
+    console.log("Result is undefined or not an object, Result:", result);
     throw new Error("Result is undefined or not an object");
   }
 };
