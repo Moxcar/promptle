@@ -13,10 +13,11 @@ export async function GET(request: NextRequest) {
       status: 401,
     });
   }
-
+  console.log("Generating daily image...");
   try {
     // Esperar a que la función asincrónica termine
     const imageUrl = await generateDailyImageWithRandomWord();
+    console.log("Daily image generated:", imageUrl);
     return new Response(JSON.stringify({ success: true, result: imageUrl }), {
       headers: { "Content-Type": "application/json" },
     });
@@ -39,6 +40,8 @@ const generateDailyImageWithRandomWord = async () => {
     "Generate an image that clearly represents the word. The image should focus on the key elements or features commonly associated with this word, making it easily identifiable. Use vibrant colors and simple shapes to make the concept of the word obvious. IMPORTANT: The image should not have the word written on it, but should be able to convey the meaning of the word without any text.";
 
   let imageUrl = "";
+
+  console.log("Generating image for word:", randomWord);
 
   await streamText({
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
@@ -93,6 +96,7 @@ const generateImage = async (word: string): Promise<string> => {
       typedResult.images.length > 0 &&
       typedResult.images[0]?.url
     ) {
+      console.log("Image generated:", typedResult.images[0].url);
       return typedResult.images[0].url;
     } else {
       throw new Error("No images were generated or image URL is missing");
