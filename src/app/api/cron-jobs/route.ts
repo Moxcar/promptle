@@ -1,7 +1,4 @@
 import type { NextRequest } from "next/server";
-import { convertToCoreMessages, streamText, tool } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { z } from "zod";
 import * as fal from "@fal-ai/serverless-client";
 import { api } from "~/trpc/server";
 import getRandomWord from "~/lib/generateRandomWord";
@@ -17,9 +14,9 @@ export async function GET(request: NextRequest) {
   try {
     // Esperar a que la función asincrónica termine
     const imageUrl = await generateDailyImageWithRandomWord();
-    console.log("Daily image generated:", imageUrl);
-    return new Response(JSON.stringify({ success: true, result: imageUrl }), {
+    return new Response(JSON.stringify({ success: true, imageUrl }), {
       headers: { "Content-Type": "application/json" },
+      status: 200,
     });
   } catch (error) {
     console.error("Error generating daily image:", error);
@@ -36,50 +33,24 @@ export async function GET(request: NextRequest) {
 
 const generateDailyImageWithRandomWord = async () => {
   const randomWord = getRandomWord();
-  const system =
-    "Generate an image that clearly represents the word. The image should focus on the key elements or features commonly associated with this word, making it easily identifiable. Use vibrant colors and simple shapes to make the concept of the word obvious. IMPORTANT: The image should not have the word written on it, but should be able to convey the meaning of the word without any text.";
-
-  let imageUrl = "";
 
   console.log("Generating image for word:", randomWord);
 
-  return streamText({
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
-    model: openai("gpt-4o-mini") as any,
-    system,
-    messages: convertToCoreMessages([
-      {
-        content: randomWord,
-        role: "system",
-      },
-    ]),
-    tools: {
-      generate_image: tool({
-        description:
-          "Generate a image that represents correctly the requested word",
-        parameters: z.object({
-          word: z.string(),
-        }),
-        execute: async ({ word }) => {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-          imageUrl = await generateImage(word);
-          //Save to database
-          await api.dailyImage.createDailyImageGuess({
-            imageUrl,
-            word,
-          });
-        },
-      }),
-    },
-  })
-    .then(() => {
-      console.log("Image generated successfully", imageUrl);
-      return imageUrl;
-    })
-    .catch((error) => {
-      console.error("Error generating image:", error);
-      throw error;
+  try {
+    const imageUrl = await generateImage(randomWord);
+
+    // Save to database
+    await api.dailyImage.createDailyImageGuess({
+      imageUrl,
+      word: randomWord,
     });
+
+    console.log("Image generated successfully", imageUrl);
+    return imageUrl;
+  } catch (error) {
+    console.error("Error generating image:", error);
+    throw error;
+  }
 };
 
 const generateImage = async (word: string): Promise<string> => {
