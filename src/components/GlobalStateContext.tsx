@@ -6,6 +6,7 @@ import React, {
   useContext,
   useState,
 } from "react";
+import { set } from "zod";
 import initializeKeys from "~/lib/initializeKeys";
 import { type AttemptType, type KeyType } from "~/lib/types";
 import { api } from "~/trpc/react";
@@ -65,6 +66,14 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
         return attempt;
       }),
     );
+    if (newAttempts.find((attempt) => attempt.status === "pending")) {
+      return;
+    }
+    if (newAttempts.find((attempt) => attempt.status === "correct")) {
+      setAttempts(newAttempts);
+      alert("You won!");
+      return;
+    }
     const idleAttempt = newAttempts.find(
       (attempt) => attempt.status === "idle",
     );
