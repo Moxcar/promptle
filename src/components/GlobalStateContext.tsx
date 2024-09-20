@@ -73,7 +73,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
     }
     if (newAttempts.find((attempt) => attempt.status === "correct")) {
       setAttempts(newAttempts);
-      alert("You won!");
+      alert("You Win");
       return;
     }
     const idleAttempt = newAttempts.find(
