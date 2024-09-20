@@ -41,16 +41,33 @@ export const submitAttemptRouter = createTRPCRouter({
 
       const keys = input.keys.map((key, index) => ({
         key: key.key,
-        status: rightAnswer?.answer.includes(key.key.toLowerCase())
-          ? rightAnswer?.answer[index] == key.key.toLocaleLowerCase()
-            ? "correct"
-            : "incorrect"
-          : "absent",
+        status: getKeyStatus(
+          key.key.toLocaleLowerCase(),
+          rightAnswer?.answer,
+          index,
+        ),
       }));
-      console.log("ADASDASDSAD", keys);
       return {
         keys,
         isCorrect,
       };
     }),
 });
+
+const getKeyStatus = (
+  key: string,
+  answer: string | undefined,
+  index: number,
+) => {
+  if (!answer) {
+    return "absent";
+  }
+  if (answer.includes(key)) {
+    if (answer[index] === key) {
+      return "correct";
+    } else {
+      return "incorrect";
+    }
+  }
+  return "absent";
+};
