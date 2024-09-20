@@ -53,7 +53,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
             keys.map((row) => {
               row.map((k) => {
                 if (k.key === key.key) {
-                  if (!(k.status === "incorrect" && key.status === "correct")) {
+                  if (k.status != "correct") {
                     k.status = key.status;
                   }
                 }
