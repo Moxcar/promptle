@@ -12,6 +12,10 @@ const config = {
         protocol: "https",
         hostname: "fal.media",
       },
+      {
+        protocol: "https",
+        hostname: "v3.fal.media",
+      },
     ],
   },
 };
