@@ -6,7 +6,6 @@ import React, {
   useContext,
   useState,
 } from "react";
-import { set } from "zod";
 import initializeKeys from "~/lib/initializeKeys";
 import { type AttemptType, type KeyType } from "~/lib/types";
 import { api } from "~/trpc/react";
@@ -23,8 +22,10 @@ const GlobalStateContext = createContext<GlobalStateContextType | undefined>(
   undefined,
 );
 
+const totalAttempts = 5;
+
 const initializeAttempts = (): AttemptType[] => {
-  return new Array(4).fill(null).map((_, index) => ({
+  return new Array(totalAttempts).fill(null).map((_, index) => ({
     status: index === 0 ? "pending" : "idle",
     keys: [],
   }));

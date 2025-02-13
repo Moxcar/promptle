@@ -72,7 +72,7 @@ export default function Keyboard({
               return (
                 <button
                   key={keyIndex}
-                  className={`rounded-md ${STATUS_COLORS[key.status]} border-[1px] border-gray-800 p-2 text-white`}
+                  className={`rounded-md ${STATUS_COLORS[key.status]} border-[1px] border-gray-800 p-2 text-black dark:text-white`}
                   onClick={() => onKeyClick(key)}
                 >
                   {key.key}
