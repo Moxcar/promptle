@@ -28,7 +28,7 @@ export default function RootLayout({
         >
           <TRPCReactProvider>
             <GlobalStateProvider>
-              <main className="flex min-h-screen flex-col items-center justify-center gap-4 text-white">
+              <main className="flex min-h-screen flex-col items-center justify-center gap-4 text-black dark:text-white">
                 <ModeToggle />
                 {children}
               </main>
