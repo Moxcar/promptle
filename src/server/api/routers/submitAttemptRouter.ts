@@ -27,7 +27,6 @@ export const submitAttemptRouter = createTRPCRouter({
           },
         },
       });
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const rightAnswer = await ctx.db.dailyImageGuess.findFirst({
         where: {
           id: input.dailyImageGuessId,
@@ -39,14 +38,7 @@ export const submitAttemptRouter = createTRPCRouter({
           .join("")
           .toLowerCase() === rightAnswer?.answer;
 
-      const keys = input.keys.map((key, index) => ({
-        key: key.key,
-        status: getKeyStatus(
-          key.key.toLocaleLowerCase(),
-          rightAnswer?.answer,
-          index,
-        ),
-      }));
+      const keys = validateKeys(input.keys, rightAnswer?.answer);
       return {
         keys,
         isCorrect,
@@ -54,20 +46,35 @@ export const submitAttemptRouter = createTRPCRouter({
     }),
 });
 
-const getKeyStatus = (
-  key: string,
+const validateKeys = (
+  keys: { key: string }[],
   answer: string | undefined,
-  index: number,
 ) => {
-  if (!answer) {
-    return "absent";
-  }
-  if (answer.includes(key)) {
-    if (answer[index] === key) {
-      return "correct";
-    } else {
-      return "incorrect";
+  //Uppercase the answer and keys
+  answer = answer?.toUpperCase();
+  keys = keys.map(key => ({ key: key.key.toUpperCase() }));
+
+  if (!answer) return keys.map(key => ({ key: key.key, status: "absent" }));
+  let result = keys.map(key => ({ key: key.key, status: "absent" }));
+  let usedAnswerIndices = [];
+
+  //First mark correct positions and delete those letters from the answer
+  for (let i = 0; i < answer.length; i++) {
+    if (answer[i] === keys[i]?.key) {
+      result[i] = { key: keys[i]!.key, status: "correct" };
+      usedAnswerIndices.push(i);
+      //Replace the letter in the answer with a space
+      answer = answer.slice(0, i) + " " + answer.slice(i + 1);
     }
   }
-  return "absent";
+
+  //Second mark incorrect positions and delete those letters from the answer
+  for (let i = 0; i < keys.length; i++) {
+    if (answer.includes(keys[i]!.key) && !usedAnswerIndices.includes(answer.indexOf(keys[i]!.key)) && result[i]?.status == "absent") {
+      result[i] = { key: keys[i]!.key, status: "incorrect" };
+      usedAnswerIndices.push(answer.indexOf(keys[i]!.key));
+    }
+  }
+
+  return result;
 };
