@@ -17,6 +17,23 @@ export const dailyImageRouter = createTRPCRouter({
       });
   }),
 
+  getImagesForBackground: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.dailyImageGuess
+      .findMany({
+        orderBy: { createdAt: "desc" },
+        take: 100,
+      })
+      .then((dailyImageGuesses) => {
+        return dailyImageGuesses.map((dailyImageGuess) => {
+          return {
+            imageUrl: dailyImageGuess?.imageUrl,
+            wordLength: dailyImageGuess?.answer.length,
+            dailyImageGuessId: dailyImageGuess?.id,
+          };
+        });
+      });
+  }),
+
   createDailyImageGuess: publicProcedure
     .input(
       z.object({
