@@ -7,7 +7,11 @@ import React, {
   useState,
 } from "react";
 import initializeKeys from "~/lib/initializeKeys";
-import { type AttemptType, type KeyType } from "~/lib/types";
+import {
+  type AttemptType,
+  type KeyType,
+  type GameStatusType,
+} from "~/lib/types";
 import { api } from "~/trpc/react";
 
 type GlobalStateContextType = {
@@ -16,6 +20,7 @@ type GlobalStateContextType = {
   attempts: AttemptType[];
   setAttempts: React.Dispatch<React.SetStateAction<AttemptType[]>>;
   submitCurrentAttempt: (dailyImageGuessId: number, length: number) => void;
+  gameStatus: GameStatusType;
 };
 
 const GlobalStateContext = createContext<GlobalStateContextType | undefined>(
@@ -34,6 +39,7 @@ const initializeAttempts = (): AttemptType[] => {
 export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
   const [keys, setKeys] = useState<KeyType[][]>(initializeKeys());
   const [attempts, setAttempts] = useState(initializeAttempts());
+  const [gameStatus, setGameStatus] = useState<GameStatusType>("playing");
   const submitAttempt = api.submitAttempt.submitAttempt.useMutation();
   const submitCurrentAttempt = async (
     dailyImageGuessId: number,
@@ -74,7 +80,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
     }
     if (newAttempts.find((attempt) => attempt.status === "correct")) {
       setAttempts(newAttempts);
-      alert("You Win");
+      setGameStatus("won");
       return;
     }
     const idleAttempt = newAttempts.find(
@@ -83,7 +89,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
     if (idleAttempt) {
       idleAttempt.status = "pending";
     } else {
-      alert("Game Over");
+      setGameStatus("lost");
     }
     setAttempts(newAttempts);
   };
@@ -97,6 +103,7 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
         setAttempts,
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         submitCurrentAttempt,
+        gameStatus,
       }}
     >
       {children}
