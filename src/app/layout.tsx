@@ -28,7 +28,7 @@ export default function RootLayout({
         >
           <TRPCReactProvider>
             <GlobalStateProvider>
-              <main className="min-h-screen pt-20 text-black dark:text-white">
+              <main className="min-h-screen pt-16 text-black dark:text-white">
                 <NavBar />
                 {children}
               </main>

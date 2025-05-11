@@ -13,6 +13,9 @@ export interface ImageData {
 export interface RenderItemProps {
   image: ImageData;
   index: number;
+  isHovered?: boolean;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
 interface ScrollingRowProps {
@@ -35,6 +38,15 @@ export function ScrollingRow({
   // Use a ref to measure the width of one set of images.
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollWidth, setScrollWidth] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  //Console log hovered index
+  useEffect(() => {
+    if (hoveredIndex !== null) {
+      console.log("Hovered index:", hoveredIndex);
+    }
+  }, [hoveredIndex]);
 
   useEffect(() => {
     // Once images are rendered, measure the container width and divide by 2 (because of duplication).
@@ -52,17 +64,42 @@ export function ScrollingRow({
           style={{ display: "inline-block", whiteSpace: "nowrap" }}
         >
           {[...images, ...images].map((image, index) => (
-            <span key={index} style={{ display: "inline-block" }}>
+            <span
+              key={index}
+              style={{ display: "inline-block" }}
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+            >
               {RenderItem ? (
-                <RenderItem image={image} index={index} />
-              ) : (
-                <Image
-                  src={image.imageUrl}
-                  alt="Daily image"
-                  width={250}
-                  height={250}
-                  className="max-w-[250px] max-h-[250px] aspect-[3/4]"
+                <RenderItem
+                  image={image}
+                  index={index}
+                  isHovered={hoveredIndex === index}
+                  onMouseEnter={() => {
+                    setIsHovered(true);
+                    setHoveredIndex(index);
+                  }}
+                  onMouseLeave={() => {
+                    setIsHovered(false);
+                    setHoveredIndex(null);
+                  }}
                 />
+              ) : (
+                <div
+                  className="transition-transform duration-300"
+                  style={{
+                    transform:
+                      hoveredIndex === index ? "scale(1.1)" : "scale(1)",
+                  }}
+                >
+                  <Image
+                    src={image.imageUrl}
+                    alt="Daily image"
+                    width={250}
+                    height={250}
+                    className="aspect-[3/4] max-h-[250px] max-w-[250px]"
+                  />
+                </div>
               )}
             </span>
           ))}
@@ -81,10 +118,18 @@ export function ScrollingRow({
     direction === "left" ? { x: [0, -scrollWidth] } : { x: [-scrollWidth, 0] };
 
   return (
-    <div className="overflow-hidden h-[280px]">
+    <div
+      className="h-[280px] overflow-hidden"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <motion.div
         ref={containerRef}
-        style={{ display: "inline-block", whiteSpace: "nowrap", maxHeight: "280px" }}
+        style={{
+          display: "inline-block",
+          whiteSpace: "nowrap",
+          maxHeight: "280px",
+        }}
         animate={animation}
         transition={{
           x: {
@@ -92,21 +137,52 @@ export function ScrollingRow({
             repeatType: "loop",
             ease: "linear",
             duration: duration,
+            paused: isHovered,
           },
         }}
       >
         {[...images, ...images, ...images].map((image, index) => (
-          <span key={index} style={{ display: "inline-block" }}>
+          <span
+            key={index}
+            style={{ display: "inline-block" }}
+            onMouseEnter={() => {
+              setIsHovered(true);
+              setHoveredIndex(index);
+            }}
+            onMouseLeave={() => {
+              setIsHovered(false);
+              setHoveredIndex(null);
+            }}
+          >
             {RenderItem ? (
-              <RenderItem image={image} index={index} />
-            ) : (
-              <Image
-                src={image.imageUrl}
-                alt="Daily image"
-                width={250}
-                height={250}
-                className="max-w-[250px] max-h-[250px] aspect-[3/4]"
+              <RenderItem
+                image={image}
+                index={index}
+                isHovered={hoveredIndex === index}
+                onMouseEnter={() => {
+                  setIsHovered(true);
+                  setHoveredIndex(index);
+                }}
+                onMouseLeave={() => {
+                  setIsHovered(false);
+                  setHoveredIndex(null);
+                }}
               />
+            ) : (
+              <div
+                className="transition-transform duration-300"
+                style={{
+                  transform: hoveredIndex === index ? "scale(1.1)" : "scale(1)",
+                }}
+              >
+                <Image
+                  src={image.imageUrl}
+                  alt="Daily image"
+                  width={250}
+                  height={250}
+                  className="aspect-[3/4] max-h-[250px] max-w-[250px]"
+                />
+              </div>
             )}
           </span>
         ))}
