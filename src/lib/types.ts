@@ -10,6 +10,12 @@ export type AttemptType = {
   status: "correct" | "incorrect" | "idle" | "pending";
 };
 
+export type ImageData = {
+  imageUrl: string;
+  dailyImageGuessId: number;
+  wordLength: number;
+};
+
 export type GameStatusType = "playing" | "won" | "lost";
 
 export type KeyStatus = (typeof KEY_STATUS)[keyof typeof KEY_STATUS];

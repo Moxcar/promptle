@@ -3,12 +3,8 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
-
-export interface ImageData {
-  imageUrl: string;
-  // Add other fields if necessary
-}
+import { motion, useAnimate } from "framer-motion";
+import { type ImageData } from "~/lib/types";
 
 export interface RenderItemProps {
   image: ImageData;
@@ -35,27 +31,69 @@ export function ScrollingRow({
   speed = 50,
   RenderItem,
 }: ScrollingRowProps) {
-  // Use a ref to measure the width of one set of images.
+  const [scope, animate] = useAnimate();
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollWidth, setScrollWidth] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const animationRef = useRef<ReturnType<typeof animate>>();
 
-  //Console log hovered index
+  // Console log hovered index
   useEffect(() => {
     if (hoveredIndex !== null) {
       console.log("Hovered index:", hoveredIndex);
     }
   }, [hoveredIndex]);
 
+  // Measure the container width
   useEffect(() => {
-    // Once images are rendered, measure the container width and divide by 2 (because of duplication).
     if (containerRef.current) {
       setScrollWidth(containerRef.current.scrollWidth / 2);
     }
   }, [images]);
 
-  // Until we've measured the scrollWidth, render a static container.
+  // Calculate the duration so that the entire scrollWidth is covered at the given speed
+  const duration = scrollWidth / speed;
+
+  // Start the animation when scrollWidth is determined
+  useEffect(() => {
+    if (scrollWidth > 0) {
+      const startPosition = direction === "left" ? 0 : -scrollWidth;
+      const endPosition = direction === "left" ? -scrollWidth : 0;
+
+      // Start the animation
+      animationRef.current = animate(
+        scope.current,
+        { x: [startPosition, endPosition] },
+        {
+          duration,
+          ease: "linear",
+          repeat: Infinity,
+          repeatType: "loop",
+        },
+      );
+    }
+
+    return () => {
+      // Cleanup animation on unmount
+      if (animationRef.current) {
+        animationRef.current.stop();
+      }
+    };
+  }, [scrollWidth, direction, speed, animate, duration, scope]);
+
+  // Handle pausing and resuming the animation
+  useEffect(() => {
+    if (!animationRef.current) return;
+
+    if (isHovered) {
+      animationRef.current.pause();
+    } else {
+      animationRef.current.play();
+    }
+  }, [isHovered]);
+
+  // If we haven't measured the container width yet, render a static version to measure
   if (scrollWidth === 0) {
     return (
       <div className="overflow-hidden">
@@ -108,15 +146,6 @@ export function ScrollingRow({
     );
   }
 
-  // Calculate the duration so that the entire scrollWidth is covered at the given speed.
-  const duration = scrollWidth / speed;
-
-  // Animation values:
-  // For leftward scroll: animate from x = 0 to x = -scrollWidth
-  // For rightward scroll: animate from x = -scrollWidth to x = 0
-  const animation =
-    direction === "left" ? { x: [0, -scrollWidth] } : { x: [-scrollWidth, 0] };
-
   return (
     <div
       className="h-[280px] overflow-hidden"
@@ -124,21 +153,11 @@ export function ScrollingRow({
       onMouseLeave={() => setIsHovered(false)}
     >
       <motion.div
-        ref={containerRef}
+        ref={scope}
         style={{
           display: "inline-block",
           whiteSpace: "nowrap",
           maxHeight: "280px",
-        }}
-        animate={animation}
-        transition={{
-          x: {
-            repeat: Infinity,
-            repeatType: "loop",
-            ease: "linear",
-            duration: duration,
-            paused: isHovered,
-          },
         }}
       >
         {[...images, ...images, ...images].map((image, index) => (

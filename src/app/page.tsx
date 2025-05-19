@@ -4,6 +4,7 @@ import { ScrollingRow } from "~/components/ScrollingRow";
 import CustomImage from "~/components/CustomImage";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
+import { type ImageData } from "~/lib/types";
 
 export default async function Home() {
   // Fetch data from your API (adjust as needed)
@@ -15,12 +16,9 @@ export default async function Home() {
 
   // Group images into rows. In this example, we assume 7 rows.
   const numberOfRows = 7;
-  const rows: { imageUrl: string }[][] = Array.from(
-    { length: numberOfRows },
-    () => [],
-  );
+  const rows: ImageData[][] = Array.from({ length: numberOfRows }, () => []);
   images.forEach((image, index) => {
-    (rows[index % numberOfRows] as { imageUrl: string }[]).push(image);
+    (rows[index % numberOfRows] as ImageData[]).push(image);
   });
 
   return (
