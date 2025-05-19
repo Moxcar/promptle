@@ -22,22 +22,32 @@ export const dailyImageRouter = createTRPCRouter({
         });
     }),
 
-  getImagesForBackground: publicProcedure.query(async ({ ctx }) => {
-    return ctx.db.dailyImageGuess
-      .findMany({
-        orderBy: { createdAt: "desc" },
-        take: 100,
-      })
-      .then((dailyImageGuesses) => {
-        return dailyImageGuesses.map((dailyImageGuess) => {
-          return {
-            imageUrl: dailyImageGuess?.imageUrl,
-            wordLength: dailyImageGuess?.answer.length,
-            dailyImageGuessId: dailyImageGuess?.id,
-          };
+  getImagesForBackground: publicProcedure
+    .input(
+      z
+        .object({
+          amount: z.number().optional(),
+          skip: z.number().optional(),
+        })
+        .optional(),
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.db.dailyImageGuess
+        .findMany({
+          orderBy: { createdAt: "desc" },
+          take: input?.amount ?? 100,
+          skip: input?.skip ?? 0,
+        })
+        .then((dailyImageGuesses) => {
+          return dailyImageGuesses.map((dailyImageGuess) => {
+            return {
+              imageUrl: dailyImageGuess?.imageUrl,
+              wordLength: dailyImageGuess?.answer.length,
+              dailyImageGuessId: dailyImageGuess?.id,
+            };
+          });
         });
-      });
-  }),
+    }),
 
   createDailyImageGuess: publicProcedure
     .input(
