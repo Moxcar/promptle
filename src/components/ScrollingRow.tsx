@@ -23,6 +23,8 @@ interface ScrollingRowProps {
    * It receives an object with the image data and its index.
    */
   RenderItem?: React.ComponentType<RenderItemProps>;
+  LoadingItem?: React.ComponentType;
+  isLoading?: boolean;
 }
 
 export function ScrollingRow({
@@ -30,6 +32,8 @@ export function ScrollingRow({
   direction = "left",
   speed = 50,
   RenderItem,
+  LoadingItem,
+  isLoading,
 }: ScrollingRowProps) {
   const [scope, animate] = useAnimate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -173,7 +177,9 @@ export function ScrollingRow({
               setHoveredIndex(null);
             }}
           >
-            {RenderItem ? (
+            {isLoading ? (
+              <LoadingItem />
+            ) : RenderItem ? (
               <RenderItem
                 image={image}
                 index={index}

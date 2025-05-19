@@ -11,13 +11,27 @@ interface ScrollingRowContainerProps {
   images: ImageData[];
 }
 
+const LoadingItem = () => (
+  <div className="relative m-2 h-[280px] w-[210px] overflow-hidden rounded-lg">
+    <div className="absolute inset-0 animate-pulse bg-gray-200" />
+    <div className="absolute bottom-0 left-0 right-0 p-2">
+      <div className="h-4 w-3/4 animate-pulse rounded bg-gray-300" />
+      <div className="mt-2 h-3 w-1/2 animate-pulse rounded bg-gray-300" />
+    </div>
+  </div>
+);
+
 export default function ScrollingRowContainer({
   images,
 }: ScrollingRowContainerProps) {
   const [numberOfRows, setNumberOfRows] = useState(4);
   const [infiniteScroll, setInfiniteScroll] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [rows, setRows] = useState<ImageData[][]>(() => {
-    const initialRows = Array.from({ length: numberOfRows }, () => []);
+    const initialRows: ImageData[][] = Array.from(
+      { length: numberOfRows },
+      () => [],
+    );
     images.forEach((image, index) => {
       initialRows[index % numberOfRows]?.push(image);
     });
@@ -25,30 +39,37 @@ export default function ScrollingRowContainer({
   });
 
   const [ref, inView] = useInView();
-  const { data: newImages } = api.dailyImage.getImagesForBackground.useQuery(
-    {
-      amount: 12,
-      skip: numberOfRows * 12,
-    },
-    {
-      enabled: inView,
-    },
-  );
+  const { data: newImages, isLoading: isFetching } =
+    api.dailyImage.getImagesForBackground.useQuery(
+      {
+        amount: 12,
+        skip: numberOfRows * 12,
+      },
+      {
+        enabled: () => {
+          return inView && infiniteScroll && !isLoading;
+        },
+      },
+    );
 
   useEffect(() => {
     if (newImages) {
-      if (newImages.length > 0) {
-        setRows((prevRows) => {
-          const newRows = [...prevRows];
-          newRows[numberOfRows] = newImages;
-          return newRows;
-        });
-        setNumberOfRows((prev) => prev + 1);
-      } else {
+      if (newImages.length === 0) {
         setInfiniteScroll(false);
+        return;
       }
+      setRows((prevRows) => {
+        const newRows = [...prevRows];
+        newRows[numberOfRows] = newImages;
+        return newRows;
+      });
+      setNumberOfRows((prev) => prev + 1);
     }
   }, [newImages, numberOfRows]);
+
+  useEffect(() => {
+    setIsLoading(isFetching);
+  }, [isFetching]);
 
   return (
     <div className="overflow-hidden">
@@ -60,6 +81,8 @@ export default function ScrollingRowContainer({
             direction={rowIndex % 2 === 0 ? "left" : "right"}
             speed={50}
             RenderItem={CustomImage}
+            LoadingItem={LoadingItem}
+            isLoading={rowIndex === rows.length - 1 && isLoading}
           />
         ))}
         {infiniteScroll && <div ref={ref} className="h-4" />}
