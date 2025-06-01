@@ -1,6 +1,6 @@
 import DailyImage from "~/components/DailyImage";
-import GuessesInputs from "~/components/guesses-inputs";
-import Keyboard from "~/components/keyboard";
+import GuessesInputs from "~/components/GuesssesInputs";
+import Keyboard from "~/components/Keyboard";
 import { api, HydrateClient } from "~/trpc/server";
 
 export default async function Home({
