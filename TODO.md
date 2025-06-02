@@ -1,0 +1,4 @@
+- Add check mark in completed images for the landing page
+- Fix last row when fetching new images on scroll in landing
+- Only accept submission when is actually a valid english word
+- Feedback for user when incompleted/invalid word
