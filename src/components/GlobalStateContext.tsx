@@ -13,6 +13,7 @@ import {
   type GameStatusType,
 } from "~/lib/types";
 import { api } from "~/trpc/react";
+import Alert from "./Alert";
 
 type GlobalStateContextType = {
   keys: KeyType[][];
