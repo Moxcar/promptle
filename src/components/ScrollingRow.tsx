@@ -178,7 +178,9 @@ export function ScrollingRow({
             }}
           >
             {isLoading ? (
-              <LoadingItem />
+              LoadingItem ? (
+                <LoadingItem />
+              ) : null
             ) : RenderItem ? (
               <RenderItem
                 image={image}
