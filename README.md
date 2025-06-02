@@ -1,29 +1,77 @@
-# Create T3 App
+# Promptle
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A web app built with the T3 Stack where users guess a daily AI-generated image. The image is created using a random word and the FAL AI API. Includes secure cron jobs, Postgres database, and modern React features.
 
-## What's next? How do I make an app with this?
+## Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- Daily AI-generated image guessing game
+- Next.js 14, React 18, TypeScript
+- Prisma ORM with PostgreSQL
+- tRPC for end-to-end typesafe APIs
+- Tailwind CSS for styling
+- Secure cron job endpoint
+- FAL AI integration for image generation
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Environment Variables
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+Create a `.env` file in the project root with the following variables:
 
-## Learn More
+| Variable                   | Description                                   |
+| -------------------------- | --------------------------------------------- |
+| `DATABASE_URL`             | Main database connection string (Postgres)    |
+| `POSTGRES_PRISMA_URL`      | Prisma connection string (with pooling)       |
+| `POSTGRES_URL_NON_POOLING` | Prisma direct connection string (no pooling)  |
+| `CRON_SECRET`              | Secret for securing cron job API              |
+| `FAL_API_KEY`              | API key for FAL AI image generation           |
+| `VERCEL_URL`               | (Optional) Vercel deployment URL              |
+| `PORT`                     | (Optional) Port for local dev (default: 3000) |
+| `NODE_ENV`                 | "development", "test", or "production"        |
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+Example `.env`:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+```
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+POSTGRES_PRISMA_URL=postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+POSTGRES_URL_NON_POOLING=postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+CRON_SECRET=your_cron_secret
+FAL_API_KEY=your_fal_api_key
+VERCEL_URL=your-vercel-url
+PORT=3000
+NODE_ENV=development
+```
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+## Getting Started
 
-## How do I deploy this?
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd promptle
+   ```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+3. **Set up your environment variables** (see above)
+4. **Set up the database**
+   ```bash
+   npx prisma migrate dev
+   ```
+5. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+## Database
+
+- Uses PostgreSQL
+- Prisma schema is in `prisma/schema.prisma`
+- Migrations handled via Prisma CLI
+
+## Deployment
+
+- Ready for Vercel, Docker, or custom Node.js hosting
+- Set all required environment variables in your deployment platform
+
+## Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
