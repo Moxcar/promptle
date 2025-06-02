@@ -46,17 +46,14 @@ export const submitAttemptRouter = createTRPCRouter({
     }),
 });
 
-const validateKeys = (
-  keys: { key: string }[],
-  answer: string | undefined,
-) => {
+const validateKeys = (keys: { key: string }[], answer: string | undefined) => {
   //Uppercase the answer and keys
   answer = answer?.toUpperCase();
-  keys = keys.map(key => ({ key: key.key.toUpperCase() }));
+  keys = keys.map((key) => ({ key: key.key.toUpperCase() }));
 
-  if (!answer) return keys.map(key => ({ key: key.key, status: "absent" }));
-  let result = keys.map(key => ({ key: key.key, status: "absent" }));
-  let usedAnswerIndices = [];
+  if (!answer) return keys.map((key) => ({ key: key.key, status: "absent" }));
+  const result = keys.map((key) => ({ key: key.key, status: "absent" }));
+  const usedAnswerIndices = [];
 
   //First mark correct positions and delete those letters from the answer
   for (let i = 0; i < answer.length; i++) {
@@ -70,7 +67,11 @@ const validateKeys = (
 
   //Second mark incorrect positions and delete those letters from the answer
   for (let i = 0; i < keys.length; i++) {
-    if (answer.includes(keys[i]!.key) && !usedAnswerIndices.includes(answer.indexOf(keys[i]!.key)) && result[i]?.status == "absent") {
+    if (
+      answer.includes(keys[i]!.key) &&
+      !usedAnswerIndices.includes(answer.indexOf(keys[i]!.key)) &&
+      result[i]?.status == "absent"
+    ) {
       result[i] = { key: keys[i]!.key, status: "incorrect" };
       usedAnswerIndices.push(answer.indexOf(keys[i]!.key));
     }

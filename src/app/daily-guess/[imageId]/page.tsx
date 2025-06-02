@@ -12,9 +12,7 @@ export default async function Home({
     imageUrl,
     wordLength = 0,
     dailyImageGuessId = 0,
-  } = await api.dailyImage.getImageUrlOfTheDay(
-    Number(params.imageId) as number,
-  );
+  } = await api.dailyImage.getImageUrlOfTheDay(Number(params.imageId));
   return (
     <HydrateClient>
       <div className="flex flex-col items-center justify-center gap-4">

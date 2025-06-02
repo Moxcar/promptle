@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { GameStatusType } from "~/lib/types";
+import type { GameStatusType } from "~/lib/types";
 
 export default function Alert({ type }: { type: GameStatusType }) {
   const [show, setShow] = useState(false);
