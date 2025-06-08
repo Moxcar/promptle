@@ -82,9 +82,22 @@ export default function ScrollingRowContainer({
             speed={50}
             RenderItem={CustomImage}
             LoadingItem={LoadingItem}
-            isLoading={rowIndex === rows.length - 1 && isLoading}
           />
         ))}
+        {isLoading && (
+          <ScrollingRow
+            images={Array.from({ length: 12 }, (_, i) => ({
+              imageUrl: "",
+              dailyImageGuessId: -1,
+              wordLength: 0,
+            }))}
+            direction={numberOfRows % 2 === 0 ? "left" : "right"}
+            speed={50}
+            RenderItem={CustomImage}
+            LoadingItem={LoadingItem}
+            isLoading={true}
+          />
+        )}
         {infiniteScroll && <div ref={ref} className="h-4" />}
       </div>
     </div>
