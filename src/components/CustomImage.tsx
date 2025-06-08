@@ -1,7 +1,7 @@
 // components/CustomImage.tsx
 "use client"; // Ensure this component is a Client Component if needed
 
-import React from "react";
+import React, { useEffect } from "react";
 import { type RenderItemProps } from "./ScrollingRow";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,6 +13,7 @@ export default function CustomImage({
   isHovered,
   onMouseEnter,
   onMouseLeave,
+  checked = false, // Optional prop to indicate if the image is checked
 }: RenderItemProps) {
   return (
     <div
@@ -37,6 +38,25 @@ export default function CustomImage({
         height={280}
         className="rounded-xl p-2"
       />
+      {checked && (
+        <div className="absolute right-3 top-3 z-10 rounded-full bg-white p-1 shadow-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="lucide lucide-check-circle text-green-500"
+          >
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="9 12 11 14 15 10"></polyline>
+          </svg>
+        </div>
+      )}
       {isHovered && (
         <div className="absolute left-1/2 top-full z-50 -translate-x-1/2 -translate-y-full pb-6">
           <Link href={`/daily-guess/${image.dailyImageGuessId}`}>

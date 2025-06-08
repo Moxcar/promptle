@@ -1,3 +1,2 @@
-- Add check mark in completed images for the landing page
 - Only accept submission when is actually a valid english word
 - Feedback for user when incompleted/invalid word

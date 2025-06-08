@@ -38,6 +38,15 @@ export default function ScrollingRowContainer({
     return initialRows;
   });
 
+  const [completedImageIds, setCompletedImageIds] = useState<number[]>([]);
+  // Initialize completedImageIds from local storage
+  useEffect(() => {
+    const storedCompletedImageIds = localStorage.getItem("completedImageIds");
+    if (storedCompletedImageIds) {
+      setCompletedImageIds(JSON.parse(storedCompletedImageIds) as number[]);
+    }
+  }, []);
+
   const [ref, inView] = useInView();
   const { data: newImages, isLoading: isFetching } =
     api.dailyImage.getImagesForBackground.useQuery(
@@ -82,6 +91,7 @@ export default function ScrollingRowContainer({
             speed={50}
             RenderItem={CustomImage}
             LoadingItem={LoadingItem}
+            completedImageIds={completedImageIds}
           />
         ))}
         {isLoading && (

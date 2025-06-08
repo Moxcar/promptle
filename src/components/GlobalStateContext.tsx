@@ -81,6 +81,17 @@ export const GlobalStateProvider = ({ children }: { children: ReactNode }) => {
     if (newAttempts.find((attempt) => attempt.status === "correct")) {
       setAttempts(newAttempts);
       setGameStatus("won");
+      //Add id to local storage
+      const completedImageIds = JSON.parse(
+        localStorage.getItem("completedImageIds") ?? "[]",
+      ) as number[];
+      if (!completedImageIds.includes(dailyImageGuessId)) {
+        completedImageIds.push(dailyImageGuessId);
+        localStorage.setItem(
+          "completedImageIds",
+          JSON.stringify(completedImageIds),
+        );
+      }
       return;
     }
     const idleAttempt = newAttempts.find(

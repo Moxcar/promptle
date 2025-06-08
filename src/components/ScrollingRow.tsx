@@ -12,6 +12,7 @@ export interface RenderItemProps {
   isHovered?: boolean;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  checked?: boolean; // Optional prop to indicate if the image is checked
 }
 
 interface ScrollingRowProps {
@@ -25,6 +26,7 @@ interface ScrollingRowProps {
   RenderItem?: React.ComponentType<RenderItemProps>;
   LoadingItem?: React.ComponentType;
   isLoading?: boolean;
+  completedImageIds?: number[]; // Array of completed image IDs
 }
 
 export function ScrollingRow({
@@ -34,6 +36,7 @@ export function ScrollingRow({
   RenderItem,
   LoadingItem,
   isLoading,
+  completedImageIds = [],
 }: ScrollingRowProps) {
   const [scope, animate] = useAnimate();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -117,6 +120,7 @@ export function ScrollingRow({
                   image={image}
                   index={index}
                   isHovered={hoveredIndex === index}
+                  checked={completedImageIds.includes(image.dailyImageGuessId)}
                   onMouseEnter={() => {
                     setIsHovered(true);
                     setHoveredIndex(index);
@@ -186,6 +190,7 @@ export function ScrollingRow({
                 image={image}
                 index={index}
                 isHovered={hoveredIndex === index}
+                checked={completedImageIds.includes(image.dailyImageGuessId)}
                 onMouseEnter={() => {
                   setIsHovered(true);
                   setHoveredIndex(index);
