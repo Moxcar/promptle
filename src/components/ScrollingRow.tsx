@@ -43,7 +43,7 @@ export function ScrollingRow({
   const [scrollWidth, setScrollWidth] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
-  const animationRef = useRef<ReturnType<typeof animate>>();
+  const animationRef = useRef<ReturnType<typeof animate>>(undefined);
 
   // Console log hovered index
   useEffect(() => {

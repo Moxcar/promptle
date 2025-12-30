@@ -3,11 +3,12 @@ import GuessesInputs from "~/components/GuesssesInputs";
 import Keyboard from "~/components/Keyboard";
 import { api, HydrateClient } from "~/trpc/server";
 
-export default async function Home({
-  params,
-}: {
-  params: { imageId: string };
-}) {
+export default async function Home(
+  props: {
+    params: Promise<{ imageId: string }>;
+  }
+) {
+  const params = await props.params;
   const {
     imageUrl,
     wordLength = 0,
