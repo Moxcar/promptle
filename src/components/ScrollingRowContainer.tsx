@@ -96,7 +96,7 @@ export default function ScrollingRowContainer({
         ))}
         {isLoading && (
           <ScrollingRow
-            images={Array.from({ length: 12 }, (_, i) => ({
+            images={Array.from({ length: 12 }, () => ({
               imageUrl: "",
               dailyImageGuessId: -1,
               wordLength: 0,

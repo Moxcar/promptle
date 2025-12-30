@@ -1,7 +1,7 @@
 // components/CustomImage.tsx
 "use client"; // Ensure this component is a Client Component if needed
 
-import React, { useEffect } from "react";
+import React from "react";
 import { type RenderItemProps } from "./ScrollingRow";
 import Image from "next/image";
 import Link from "next/link";
